@@ -64,3 +64,6 @@ transit_data_tidy %>%
   nrow
 ```
 
+
+## Problem 2
+
