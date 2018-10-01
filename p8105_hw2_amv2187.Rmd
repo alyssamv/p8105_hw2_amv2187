@@ -1,0 +1,18 @@
+---
+title: "p8105_hw2_amv2187"
+author: "Alyssa Vanderbeek"
+date: "10/1/2018"
+output: github_document
+---
+
+## Problem 1
+
+
+```{r}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+
+transit_data = read.csv('~/Downloads/NYC_Transit_Subway_Entrance_And_Exit_Data.csv')
+```
+
