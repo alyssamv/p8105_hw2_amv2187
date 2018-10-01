@@ -13,6 +13,25 @@ knitr::opts_chunk$set(echo = TRUE)
 
 library(tidyverse)
 
-transit_data = read.csv('~/Downloads/NYC_Transit_Subway_Entrance_And_Exit_Data.csv')
+transit_data = read_csv("data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv") %>%
+  janitor::clean_names()
 ```
+
+```{r data_clean}
+colnames(transit_data)
+
+head(transit_data)
+unique(transit_data$division)
+unique(transit_data$entry)
+sum(is.na(transit_data$route1)) # number of NAs in the 'route1' column. This would determine whether there were any stations (row entries) that had no routes associated. This would have been redundant and I would filter these rows out of the dataset
+
+transit_data_clean = transit_data %>%
+  select(line, station_name, station_latitude, station_longitude, route1:route11, entry, vending, entrance_type, ada) %>%
+  mutate(entry = recode(entry, 'YES' = 1, 'NO' = 0))
+
+
+```
+
+The cleaned dataset contains information about subway stations: the station name, the line it runs, its latitude and longitudinal location, the routes it services, whether entry exists and of what kind (stairs vs. elevator), and whether the station is ADA compliant. To learn and clean the data, I first imported and cleaned the column names. I looked at the list of column names to understand what variables are available. Then I examined the unique values in a few of the columns to get a sense of how many distinct values there were. Lastly, I checked whether or not there were any missing values in the "Route 1" column. This would determine whether there were any stations (row entries) that had no routes associated. This would have been redundant and I would filter these rows out of the dataset. After cleaning the data as instructed, the dataset dimension are `r nrow(transit_data_clean)` rows by `r ncol(transit_data_clean)` columns. As of now, this dataset is not tidy.
+
 
