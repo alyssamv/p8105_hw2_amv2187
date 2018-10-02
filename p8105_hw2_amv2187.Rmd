@@ -1,7 +1,7 @@
 ---
 title: "p8105_hw2_amv2187"
 author: "Alyssa Vanderbeek"
-date: "10/1/2018"
+date: "4 October 2018"
 output: github_document
 ---
 
@@ -15,50 +15,57 @@ library(tidyverse)
 
 ```
 
-```{r data_clean}
+```{r data_clean, warning=FALSE}
 transit_data_clean = read_csv("data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv") %>%
   janitor::clean_names() %>%
   select(line, station_name, station_latitude, station_longitude, route1:route11, entry, vending, entrance_type, ada) %>%
   mutate(entry = recode(entry, 'YES' = TRUE, 'NO' = FALSE))
 
-head(transit_data_clean)
+str(transit_data_clean)
 ```
 
-The cleaned dataset contains information about subway stations: the station name, the line it runs, its latitude and longitudinal location, the routes it services, whether entry exists and of what kind (stairs vs. elevator), and whether the station is ADA compliant. To learn and clean the data, I first imported and cleaned the column names. I looked at the list of column names to understand what variables are available. Then I examined the unique values in a few of the columns to get a sense of how many distinct values there were. Lastly, I checked whether or not there were any missing values in the "Route 1" column. This would determine whether there were any stations (row entries) that had no routes associated. This would have been redundant and I would filter these rows out of the dataset. After cleaning the data as instructed, the dataset dimension are `r nrow(transit_data_clean)` rows by `r ncol(transit_data_clean)` columns. As of now, this dataset is not tidy.
+The cleaned dataset contains information about subway stations: the station name, the line it runs, its latitude and longitudinal location, the routes it services, whether entry exists and of what kind (stairs vs. elevator), and whether the station is ADA compliant. To learn and clean the data, I first imported and cleaned the column names. I looked at the list of column names to understand what variables are available. Then I examined the unique values in a few of the columns to get a sense of how many distinct values there were. Lastly, I checked whether or not there were any missing values in the "Route 1" column. This would determine whether there were any stations (row entries) that had no routes associated. This would have been redundant and I would filter these rows out of the dataset. None were found. After cleaning the data as instructed, the dataset dimension are `r nrow(transit_data_clean)` rows by `r ncol(transit_data_clean)` columns. As of now, this dataset is not tidy.
 
 ```{r}
 # number of distinct stations, defined by both name and line
-transit_data_clean %>%
+n_distinct_stations = transit_data_clean %>%
   distinct(station_name, line) %>%
   nrow
 
 # number of ADA compliant stations
-transit_data_clean %>%
+n_ada_compliant_stations = transit_data_clean %>%
   select(station_name, line, ada) %>%
   unique %>%
   filter(ada == TRUE) %>%
   nrow
 
 # proportion of stations entrances/exits without vending allow entrance
-transit_data_clean %>%
+prop_no_vending_yes_entrance = transit_data_clean %>%
   filter(vending == 'NO') %>%
   summarise(sum(entry) / nrow(.))
   
 ```
 
+There are `r n_distinct_stations` distinct stations, of which `r n_ada_compliant_stations` are ADA compliant. Additionally, of the stations that do not have vending, `r round(prop_no_vending_yes_entrance * 100, 0)`% allow entrance.
 
 ```{r}
+# create tidy dataset
 transit_data_tidy = transit_data_clean %>%
-  gather(key = 'route', value = 'line', route1:route11) %>%
+  gather(key = 'route', value = 'train', route1:route11) %>%
+  mutate(route = substr(route, 6, nchar(route))) %>%
   distinct %>%
-  filter(!is.na(line))
+  filter(!is.na(train))
 
-transit_data_tidy %>%
+str(transit_data_tidy)
+
+# number of stations that service the A train
+A_train_station = transit_data_tidy %>%
   filter(line == 'A') %>%
   distinct %>%
   nrow
 
-transit_data_tidy %>%
+# number of stations that serive the A train and are ADA compliant
+ADA_compliant_A_train = transit_data_tidy %>%
   filter(line == 'A', ada == TRUE) %>%
   distinct %>%  
   nrow
