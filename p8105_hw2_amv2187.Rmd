@@ -12,6 +12,7 @@ output: github_document
 knitr::opts_chunk$set(echo = TRUE)
 
 library(tidyverse)
+library(readxl)
 
 ```
 
@@ -73,4 +74,33 @@ ADA_compliant_A_train = transit_data_tidy %>%
 
 
 ## Problem 2
+
+```{r}
+# Mr. Trash Wheel data
+trash_wheel_data = read_excel("data/HealthyHarborWaterWheelTotals2017-9-26.xlsx", 
+    sheet = "Mr. Trash Wheel", range = cell_cols(1:14)) %>%
+  janitor::clean_names() %>%
+  filter(!is.na(dumpster)) %>%
+  mutate(sports_balls = as.integer(round(sports_balls)))
+str(trash_wheel_data) # display column names and type
+
+# Precipitation data
+precipitation_2016 = readxl::read_excel("data/HealthyHarborWaterWheelTotals2017-9-26.xlsx", 
+    sheet = "2016 Precipitation", skip = 1) %>%
+  janitor::clean_names() %>%
+  filter(!is.na(month)) %>%
+  mutate(year = '2016')
+str(precipitation_2016)
+
+precipitation_2017 = readxl::read_excel("data/HealthyHarborWaterWheelTotals2017-9-26.xlsx", 
+    sheet = "2016 Precipitation", skip = 1) %>%
+  janitor::clean_names() %>%
+  filter(!is.na(month)) %>%
+  mutate(year = '2017')
+str(precipitation_2017)
+
+precipitation_combined = bind_rows(precipitation_2016, precipitation_2017) %>%
+  mutate(month = month.name[month]) # create month as character with labels January through December
+str(precipitation_combined)
+```
 
