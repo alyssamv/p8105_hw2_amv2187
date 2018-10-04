@@ -78,7 +78,7 @@ Additionally, `r A_train_station` stations service the A train, of which `r ADA_
 
 ```{r}
 ## Mr. Trash Wheel data
-trash_wheel_data = read_excel("data/HealthyHarborWaterWheelTotals2017-9-26.xlsx", 
+trash_wheel_data = read_excel("data/HealthyHarborWaterWheelTotals2018-7-28.xlsx", 
     sheet = "Mr. Trash Wheel", range = cell_cols(1:14)) %>%
   janitor::clean_names() %>%
   filter(!is.na(dumpster) & month %in% month.name) %>%  # only dumpster-specific rows; i.e. dumpster number specified and row values are not totals
@@ -88,7 +88,7 @@ str(trash_wheel_data) # display column names and type
 
 ## Precipitation data
 # 2016
-precipitation_2016 = readxl::read_excel("data/HealthyHarborWaterWheelTotals2017-9-26.xlsx", 
+precipitation_2016 = readxl::read_excel("data/HealthyHarborWaterWheelTotals2018-7-28.xlsx", 
     sheet = "2016 Precipitation", skip = 1) %>%
   janitor::clean_names() %>%
   filter(!is.na(month)) %>%
@@ -97,7 +97,7 @@ precipitation_2016 = readxl::read_excel("data/HealthyHarborWaterWheelTotals2017-
 str(precipitation_2016)
 
 # 2017
-precipitation_2017 = readxl::read_excel("data/HealthyHarborWaterWheelTotals2017-9-26.xlsx", 
+precipitation_2017 = readxl::read_excel("data/HealthyHarborWaterWheelTotals2018-7-28.xlsx", 
     sheet = "2017 Precipitation", skip = 1) %>%
   janitor::clean_names() %>%
   filter(!is.na(month) & !is.na(total)) %>%
@@ -114,7 +114,7 @@ str(precipitation_combined)
 
 The trash wheel dataset contains information about dumpsters that are sent to a waste-to-energy facility once they become full. Over the course of about `r round(difftime(max(trash_wheel_data$date), min(trash_wheel_data$date), units = 'days')/365)` years, `r nrow(trash_wheel_data)` were filled and transported to the facility. For each dumpster, information was collected regarding its weight, volume, and the type of waste it contained. This includes the number of glass bottles, plastic bags, and sports balls, to name a few. For example, from this data we know that the median number of sports balls collected in 2016 was `r trash_wheel_data %>% filter(year == '2016') %>% summarise(median_sports_balls = median(sports_balls))`. The number of homes that each dumpster powered is also estimated.  
 
-Notably, dumpsters are filled more frequently in periods of precipitation. The precipitation dataset contains the total rainfall (in inches) for each month in the years 2016 and 2017. The average rainfall in 2016 was `r round(mean(precipitation_2016$total), 2)` inches, with a high of `r max(precipitation_2016$total)` inches in `r month.name[which(precipitation_2016$total == max(precipitation_2016$total))]`, and a low of `r min(precipitation_2016$total)` inches in `r month.name[which(precipitation_2016$total == min(precipitation_2016$total))]`. In 2017, precipitation data was missing for September through December. The average rainfall was `r round(mean(precipitation_2017$total), 2)` inches, with a high of `r max(precipitation_2017$total)` inches in `r month.name[which(precipitation_2017$total == max(precipitation_2017$total))]`, and a low of `r min(precipitation_2017$total)` inches in `r month.name[which(precipitation_2017$total == min(precipitation_2017$total))]`. The total precipitation in 2017 (for January through August) was `r sum(precipitation_2017$total)` inches.
+Notably, dumpsters are filled more frequently in periods of precipitation. The precipitation dataset contains the total rainfall (in inches) for each month in the years 2016 and 2017. The average rainfall in 2016 was `r round(mean(precipitation_2016$total), 2)` inches, with a high of `r max(precipitation_2016$total)` inches in `r month.name[which(precipitation_2016$total == max(precipitation_2016$total))]`, and a low of `r min(precipitation_2016$total)` inches in `r month.name[which(precipitation_2016$total == min(precipitation_2016$total))]`. In 2017, the average rainfall was `r round(mean(precipitation_2017$total), 2)` inches, with a high of `r max(precipitation_2017$total)` inches in `r month.name[which(precipitation_2017$total == max(precipitation_2017$total))]`, and a low of `r min(precipitation_2017$total)` inches in `r month.name[which(precipitation_2017$total == min(precipitation_2017$total))]`. The total precipitation in 2017 was `r sum(precipitation_2017$total)` inches.
 
 
 ## Problem 3
