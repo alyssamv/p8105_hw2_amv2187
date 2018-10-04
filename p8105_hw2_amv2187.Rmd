@@ -133,3 +133,32 @@ brfss_cleaned = brfss_smart2010 %>%
 str(brfss_cleaned)
 ```
 
+```{r}
+num_unique_locations = brfss_cleaned %>%
+  distinct(locationdesc) %>%
+  nrow
+
+# which states are not included in the dataset?
+missing_states = which(!(state.abb %in% unique(brfss_cleaned$locationabbr)))
+
+## Function to get the mode(s) of a given variables (column)
+Modes <- function(x) {
+  t = which(table(x) == max(table(x)))
+  return(paste(names(t), collapse = ','))
+}
+
+most_common_state = Modes(brfss_cleaned$locationabbr)
+```
+
+`r brfss_cleaned %>% distinct(locationdesc) %>% nrow` distinct locations were surveyed in the BRFSS data, and every state including Washington, DC is represented. `r state.name[match(most_common_state, state.abb)]` was observed most frequently. 
+
+In 2002, the median proportion "Excellent" responses was `r brfss_cleaned %>% filter(year == 2002) %>% summarise(m = median(excellent, na.rm = T))`.
+
+```{r}
+brfss_cleaned %>%
+  filter(year == 2002) %>%
+  ggplot(., aes(x = excellent)) +
+  geom_histogram() +
+  theme_bw()
+```
+
