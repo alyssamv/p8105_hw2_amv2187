@@ -1,7 +1,7 @@
 ---
 title: "p8105_hw2_amv2187"
 author: "Alyssa Vanderbeek"
-date: "4 October 2018"
+date: "5 October 2018"
 output: github_document
 ---
 
@@ -11,14 +11,13 @@ output: github_document
 ```{r}
 knitr::opts_chunk$set(echo = TRUE)
 
-library(tidyverse)
 library(readxl)
 library(p8105.datasets)
-
+library(tidyverse)
 ```
 
 ```{r data_clean, warning=FALSE, }
-transit_data_clean = read_csv("data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv") %>%
+transit_data_clean = read_csv("data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv", col_types = cols()) %>%
   janitor::clean_names() %>%
   select(line, station_name, station_latitude, station_longitude, route1:route11, entry, vending, entrance_type, ada) %>%
   mutate(entry = recode(entry, 'YES' = TRUE, 'NO' = FALSE))
@@ -74,6 +73,7 @@ ADA_compliant_A_train = transit_data_tidy %>%
 
 Additionally, `r A_train_station` stations service the A train, of which `r ADA_compliant_A_train` are ADA compliant.
 
+
 ## Problem 2
 
 ```{r}
@@ -112,7 +112,7 @@ precipitation_combined = bind_rows(precipitation_2016, precipitation_2017) %>%
 str(precipitation_combined)
 ```
 
-The trash wheel dataset contains information about dumpsters that are sent to a waste-to-energy facility once they become full. In about `r round(difftime(max(trash_wheel_data$date), min(trash_wheel_data$date), units = 'days')/365)` years, `r nrow(trash_wheel_data)` were filled and transported to the facility. For each dumpster, information was collected regarding its weight, volume, and the type of waste it contained. This includes the number of glass bottles, plastic bags, and sports balls, to name a few. The number of homes that each dumpster powered is also estimated. For example, from this data we know that the median number of sports balls collected in 2016 was `r trash_wheel_data %>% filter(year == '2016') %>% summarise(median_sports_balls = median(sports_balls))`. 
+The trash wheel dataset contains information about dumpsters that are sent to a waste-to-energy facility once they become full. Over the course of about `r round(difftime(max(trash_wheel_data$date), min(trash_wheel_data$date), units = 'days')/365)` years, `r nrow(trash_wheel_data)` were filled and transported to the facility. For each dumpster, information was collected regarding its weight, volume, and the type of waste it contained. This includes the number of glass bottles, plastic bags, and sports balls, to name a few. For example, from this data we know that the median number of sports balls collected in 2016 was `r trash_wheel_data %>% filter(year == '2016') %>% summarise(median_sports_balls = median(sports_balls))`. The number of homes that each dumpster powered is also estimated.  
 
 Notably, dumpsters are filled more frequently in periods of precipitation. The precipitation dataset contains the total rainfall (in inches) for each month in the years 2016 and 2017. The average rainfall in 2016 was `r round(mean(precipitation_2016$total), 2)` inches, with a high of `r max(precipitation_2016$total)` inches in `r month.name[which(precipitation_2016$total == max(precipitation_2016$total))]`, and a low of `r min(precipitation_2016$total)` inches in `r month.name[which(precipitation_2016$total == min(precipitation_2016$total))]`. In 2017, precipitation data was missing for September through December. The average rainfall was `r round(mean(precipitation_2017$total), 2)` inches, with a high of `r max(precipitation_2017$total)` inches in `r month.name[which(precipitation_2017$total == max(precipitation_2017$total))]`, and a low of `r min(precipitation_2017$total)` inches in `r month.name[which(precipitation_2017$total == min(precipitation_2017$total))]`. The total precipitation in 2017 (for January through August) was `r sum(precipitation_2017$total)` inches.
 
@@ -140,6 +140,9 @@ num_unique_locations = brfss_cleaned %>%
 
 # which states are not included in the dataset?
 missing_states = which(!(state.abb %in% unique(brfss_cleaned$locationabbr)))
+
+# are there any 'extra' states?
+extra_locns = unique(brfss_cleaned$locationabbr)[which(!(unique(brfss_cleaned$locationabbr) %in% state.abb))]
 
 ## Function to get the mode(s) of a given variables (column)
 Modes <- function(x) {
