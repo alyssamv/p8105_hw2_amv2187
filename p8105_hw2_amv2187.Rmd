@@ -155,10 +155,34 @@ most_common_state = Modes(brfss_cleaned$locationabbr)
 In 2002, the median proportion "Excellent" responses was `r brfss_cleaned %>% filter(year == 2002) %>% summarise(m = median(excellent, na.rm = T))`.
 
 ```{r}
+# Histogram of "Excellent" responses in 2002
 brfss_cleaned %>%
   filter(year == 2002) %>%
   ggplot(., aes(x = excellent)) +
   geom_histogram() +
+  labs(
+    title = 'Nationwide "Excellent" responses (2002)',
+    y = 'Number of counties',
+    x = 'Proportion of "Excellent" responses'
+  ) +
   theme_bw()
+
+# Scatterplot of "Excellent" responses in New York and Queens counties 2002-2010
+brfss_cleaned %>%
+  filter(grepl('New York County|Queens County', locationdesc) == T) %>%
+  ggplot(., aes(x = year, y = excellent, color = locationdesc)) +
+  geom_point() +
+  geom_smooth(method = 'loess', se = F) +
+  labs(
+    title = 'Proportion of "Excellent" responses 2002-2010',
+    y = 'Proportion of "Excellent" responses',
+    x = 'Year'
+  ) +
+  viridis::scale_color_viridis(
+    name = "Location",
+    discrete = TRUE
+  ) +
+  theme_bw() +
+  theme(legend.position = "bottom")
 ```
 
