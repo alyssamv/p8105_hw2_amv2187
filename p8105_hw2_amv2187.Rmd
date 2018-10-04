@@ -41,12 +41,12 @@ n_ada_compliant_stations = transit_data_clean %>%
 
 # proportion of stations entrances/exits without vending allow entrance
 prop_no_vending_yes_entrance = transit_data_clean %>%
-  filter(vending == 'NO') %>%
-  summarise(sum(entry) / nrow(.))
+  filter(vending == 'NO') %>% 
+  summarise(sum(entry) / n())
   
 ```
 
-There are `r n_distinct_stations` distinct stations, of which `r n_ada_compliant_stations` are ADA compliant. Of the stations that do not have vending, `r round(prop_no_vending_yes_entrance * 100, 0)`% allow entrance.
+There are `r n_distinct_stations` distinct stations, of which `r n_ada_compliant_stations` are ADA compliant. Of the station access points that do not have vending, `r round(prop_no_vending_yes_entrance * 100, 0)`% allow entrance.
 
 ```{r}
 # create tidy dataset
